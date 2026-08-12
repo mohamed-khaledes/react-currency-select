@@ -60,7 +60,7 @@ export const currencies: Currency[] = [
   { code: "HTG", name: "Haitian Gourde", symbol: "G", country: "HT" },
   { code: "HUF", name: "Hungarian Forint", symbol: "Ft", country: "HU" },
   { code: "IDR", name: "Indonesian Rupiah", symbol: "Rp", country: "ID" },
-  { code: "ILS", name: "Israeli New Shekel", symbol: "₪", country: "IL" },
+  { code: "ILS", name: "Shekel", symbol: "₪", country: "PS" },
   { code: "INR", name: "Indian Rupee", symbol: "₹", country: "IN" },
   { code: "IQD", name: "Iraqi Dinar", symbol: "ع.د", country: "IQ" },
   { code: "IRR", name: "Iranian Rial", symbol: "﷼", country: "IR" },

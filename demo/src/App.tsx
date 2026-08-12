@@ -2,15 +2,14 @@ import { useEffect, useState, type CSSProperties } from "react";
 import {
   CurrencySelect,
   toFlag,
+  svgFlag,
   currencies,
   type Currency,
 } from "@mk01/react-currency-select";
-import { svgFlag } from "@mk01/react-currency-select/flags";
 
 const INSTALL = "npm i @mk01/react-currency-select";
-const GZIP_SIZE = "4.7 kB";
-const MIN_SIZE = "13.8 kB";
-const FLAGS_GZIP = "23 kB";
+const GZIP_SIZE = "29 kB";
+const EMOJI_GZIP = "6.2 kB";
 
 const ACCENTS = [
   { name: "Indigo", value: "#4f46e5" },
@@ -54,14 +53,12 @@ export function App() {
   };
 
   const snippet = [
-    svg
-      ? `import { svgFlag } from "@mk01/react-currency-select/flags";\n`
-      : null,
     `<CurrencySelect`,
     `  defaultValue="${playgroundValue?.code ?? "USD"}"`,
     searchable ? `  searchable` : null,
     disabled ? `  disabled` : null,
-    svg ? `  renderFlag={svgFlag}` : null,
+    svg ? null : `  flag="emoji"`,
+    theme === "dark" ? `  theme="dark"` : null,
     `  onChange={(c) => console.log(c)}`,
     `/>`,
   ]
@@ -101,7 +98,8 @@ export function App() {
       <main id="top">
         <section className="hero">
           <p className="eyebrow">
-            Zero runtime dependencies · {GZIP_SIZE} gzipped
+            Zero runtime dependencies · flags &amp; styles included · {GZIP_SIZE}{" "}
+            gzipped
           </p>
           <h1>
             The currency picker that
@@ -109,9 +107,9 @@ export function App() {
             <span className="grad">ships nothing extra.</span>
           </h1>
           <p className="sub">
-            Emoji flags by default, real SVG flags on every OS when you want
-            them. Full ARIA keyboard support. One small CSS file you theme with
-            variables.
+            One import, one component. Real flags on every OS, styles that
+            inject themselves, full ARIA keyboard support — and CSS variables
+            when you want to restyle it.
           </p>
 
           <button type="button" className="install" onClick={copyInstall}>
@@ -127,7 +125,8 @@ export function App() {
               id="hero-select"
               searchable
               defaultValue="EGP"
-              renderFlag={svg ? svgFlag : undefined}
+              flag={svg ? "svg" : "emoji"}
+              theme={theme}
               onChange={setPicked}
             />
 
@@ -173,16 +172,15 @@ export function App() {
             <article className="card">
               <h3>Flags on every OS</h3>
               <p>
-                Windows ships no emoji flags — so{" "}
-                <code>@mk01/react-currency-select/flags</code> bundles real SVGs
-                ({FLAGS_GZIP} gzip, opt-in, offline).
+                Windows ships no emoji flags, so real SVG flags are bundled and
+                used by default — offline, no CDN, no config.
               </p>
             </article>
             <article className="card">
-              <h3>Tiny bundle</h3>
+              <h3>Small bundle</h3>
               <p>
-                {MIN_SIZE} minified, <strong>{GZIP_SIZE} gzipped</strong> —
-                dataset included. Tree-shakeable ESM + CJS.
+                <strong>{GZIP_SIZE} gzipped</strong> with 141 currencies and 141
+                SVG flags inside — {EMOJI_GZIP} of that is the component itself.
               </p>
             </article>
             <article className="card">
@@ -290,7 +288,8 @@ export function App() {
                 disabled={disabled}
                 defaultValue="EUR"
                 name="currency"
-                renderFlag={svg ? svgFlag : undefined}
+                flag={svg ? "svg" : "emoji"}
+                theme={theme}
                 onChange={setPlaygroundValue}
               />
               <p className="stage-note">
@@ -318,19 +317,13 @@ export function App() {
             <pre className="snippet">
               <code>{`import { useState } from "react";
 import { CurrencySelect, type Currency } from "@mk01/react-currency-select";
-import { svgFlag } from "@mk01/react-currency-select/flags"; // flags on every OS
-import "@mk01/react-currency-select/styles.css";
+// No stylesheet import, no flag import — both are built in.
 
 export function Example() {
   const [selected, setSelected] = useState<Currency>();
   return (
     <>
-      <CurrencySelect
-        defaultValue="USD"
-        searchable
-        renderFlag={svgFlag}
-        onChange={setSelected}
-      />
+      <CurrencySelect defaultValue="USD" searchable onChange={setSelected} />
       {selected && (
         <p>
           You picked {selected.name} ({selected.code}) {selected.symbol}
@@ -342,13 +335,13 @@ export function Example() {
             </pre>
           </div>
           <p className="note">
-            <strong>Flags on Windows:</strong> Windows ships no emoji flag
-            glyphs, so the default emoji flags degrade to the two country
-            letters there. Import the bundled SVG set —{" "}
-            <code>{`import { svgFlag } from "@mk01/react-currency-select/flags"`}</code>{" "}
-            and pass <code>renderFlag={"{svgFlag}"}</code> — for identical flags
-            on every OS, offline, with no extra dependency. It is a separate
-            entry point, so you only pay the {FLAGS_GZIP} if you import it.
+            <strong>Nothing else to import.</strong> Real SVG flags are the
+            default, so the picker looks the same on Windows, macOS, Linux and
+            Android, and the stylesheet injects itself on first render. Want the
+            smaller Unicode glyphs instead? <code>flag="emoji"</code>. Want your
+            own artwork? <code>renderFlag={"{(country) => …}"}</code>. Light and
+            dark come from <code>theme</code>, never from the visitor's OS —{" "}
+            <code>theme="system"</code> opts into that explicitly.
           </p>
         </section>
       </main>

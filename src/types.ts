@@ -25,6 +25,20 @@ export interface CurrencySelectProps {
   /** Text shown when nothing is selected. Default: "Select currency". */
   placeholder?: string;
 
+  /**
+   * Colour scheme. Default: `"light"` — the control never follows the OS unless
+   * you ask it to, so it cannot go dark inside a light app.
+   * Pass `"system"` to opt into `prefers-color-scheme`.
+   */
+  theme?: "light" | "dark" | "system";
+
+  /**
+   * Which flags to draw. Default: `"svg"` — real SVG flags bundled in the
+   * package, identical on every OS including Windows. `"emoji"` uses Unicode
+   * flag glyphs instead (smaller, but Windows renders them as letters).
+   */
+  flag?: "svg" | "emoji";
+
   /** Show a filter input at the top of the dropdown. Default: false. */
   searchable?: boolean;
   /** Placeholder for the filter input. Default: "Search currencies…". */
@@ -37,6 +51,16 @@ export interface CurrencySelectProps {
   name?: string;
   "aria-label"?: string;
 
-  /** Optional: replace the emoji flag with your own node (e.g. an SVG). */
+  /**
+   * Draw your own flag instead of the built-in ones (e.g. your own SVG sprite
+   * or an <img>). Takes precedence over `flag`.
+   */
   renderFlag?: (country: string) => ReactNode;
+
+  /**
+   * Auto-injects the component stylesheet into <head> on first render.
+   * Default: true. Set false only if you import `styles.css` yourself or ship a
+   * strict CSP that forbids inline styles.
+   */
+  injectStyles?: boolean;
 }

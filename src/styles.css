@@ -218,22 +218,25 @@
   text-align: center;
 }
 
-@media (prefers-color-scheme: dark) {
-  .rcs-root:not([data-theme="light"]) {
-    --rcs-bg: #14141a;
-    --rcs-fg: #f4f4f5;
-    --rcs-muted: #9ca3af;
-    --rcs-border: #2a2a33;
-    --rcs-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  }
-}
-
+/* Dark is opt-in: `theme="dark"` always, or `theme="system"` to follow the OS.
+   The default (`theme="light"`) never reacts to prefers-color-scheme, so the
+   control cannot go dark inside a light app. */
 .rcs-root[data-theme="dark"] {
   --rcs-bg: #14141a;
   --rcs-fg: #f4f4f5;
   --rcs-muted: #9ca3af;
   --rcs-border: #2a2a33;
   --rcs-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+@media (prefers-color-scheme: dark) {
+  .rcs-root[data-theme="system"] {
+    --rcs-bg: #14141a;
+    --rcs-fg: #f4f4f5;
+    --rcs-muted: #9ca3af;
+    --rcs-border: #2a2a33;
+    --rcs-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

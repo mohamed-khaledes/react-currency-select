@@ -1,6 +1,6 @@
 {
   "name": "@mk01/react-currency-select",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Tiny, zero-dependency React currency selector with flags.",
   "type": "module",
   "sideEffects": [
@@ -26,13 +26,14 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup && node scripts/copy-css.mjs",
+    "build": "node scripts/gen-css.mjs && tsup && node scripts/copy-css.mjs",
     "gen:flags": "node scripts/gen-flags.mjs",
     "typecheck": "tsc --noEmit",
     "dev:demo": "vite --config demo/vite.config.ts",
     "build:demo": "vite build --config demo/vite.config.ts",
     "preview:demo": "vite preview --config demo/vite.config.ts",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "gen:css": "node scripts/gen-css.mjs"
   },
   "peerDependencies": {
     "react": ">=17",

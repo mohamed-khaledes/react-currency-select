@@ -30,7 +30,6 @@ React 17+ is a peer dependency. Nothing else is installed.
 ```tsx
 import { useState } from "react";
 import { CurrencySelect, type Currency } from "@mk01/react-currency-select";
-import "@mk01/react-currency-select/styles.css";
 
 export function Example() {
   const [selected, setSelected] = useState<Currency>();
@@ -47,56 +46,41 @@ export function Example() {
 }
 ```
 
-The stylesheet is never auto-injected — import it yourself so the package stays
-SSR-safe.
+That is the whole setup: **no stylesheet import, no flag import.** The component
+injects its own CSS on first render (SSR-safe — nothing runs without a DOM) and draws
+real SVG flags out of the box.
 
-## Flags on every OS (including Windows)
+## Flags — `flag`
 
-By default flags are derived from the country code at runtime by mapping each letter
-to its Unicode **Regional Indicator Symbol** — no images, no sprite sheet, no flag
-library:
-
-```ts
-import { toFlag } from "@mk01/react-currency-select";
-toFlag("US"); // "🇺🇸"
-```
-
-That renders on macOS, iOS, Android and most Linux setups, but **Windows ships no
-flag glyphs at all**, so browsers there draw the two letters (`US`) instead. No
-amount of CSS fixes that — the glyphs simply do not exist on the machine.
-
-So the package also ships real **SVG flags** behind a separate entry point:
+Real SVG flags are bundled and used by default, so the picker looks identical on
+Windows, macOS, Linux, Android and iOS with no configuration:
 
 ```tsx
-import { CurrencySelect } from "@mk01/react-currency-select";
-import { svgFlag } from "@mk01/react-currency-select/flags";
-import "@mk01/react-currency-select/styles.css";
-
-<CurrencySelect renderFlag={svgFlag} />;
+<CurrencySelect />                 // bundled SVG flags (default)
+<CurrencySelect flag="emoji" />    // Unicode flag glyphs — smaller, but see below
 ```
 
-Identical flags on Windows, macOS, Linux, Android and iOS. Still **no runtime
-dependency and no network request** — the artwork is vendored into the package at
-build time and inlined as SVG markup.
+`flag="emoji"` maps each country code to its **Regional Indicator Symbols**. Those
+render on macOS, iOS, Android and most Linux setups, but **Windows ships no flag
+glyphs at all**, so browsers there draw the two letters (`US`) instead — which is
+exactly why SVG is the default.
 
-Because it is a separate entry, you only pay for it when you import it:
+There is **no runtime dependency and no network request** either way: the artwork is
+vendored into the package at build time and inlined as SVG markup.
 
-| Import | gzip |
-| --- | --- |
-| `@mk01/react-currency-select` (emoji flags) | 4.7 kB |
-| `+ @mk01/react-currency-select/flags` (SVG flags) | +23 kB |
-
-`@mk01/react-currency-select/flags` also exports:
+Helpers, all from the main entry:
 
 ```tsx
-import { FlagIcon, hasSvgFlag, FLAG_SVGS } from "@mk01/react-currency-select/flags";
+import { toFlag, svgFlag, FlagIcon, hasSvgFlag, FLAG_SVGS } from "@mk01/react-currency-select";
 
-<FlagIcon country="JP" />;      // standalone flag element
+toFlag("JP");                   // "🇯🇵" — the emoji glyph
+<FlagIcon country="JP" />;      // standalone SVG flag element
 hasSvgFlag("JP");               // true — countries outside the set fall back to emoji
 FLAG_SVGS.JP;                   // the raw inline SVG string
 ```
 
-Prefer to fetch flags instead of bundling them? `renderFlag` takes anything:
+Prefer your own artwork, or to fetch flags instead of bundling them? `renderFlag`
+takes anything and wins over `flag`:
 
 ```tsx
 <CurrencySelect
@@ -112,33 +96,63 @@ Prefer to fetch flags instead of bundling them? `renderFlag` takes anything:
 ```
 
 The 141 bundled flags cover every country in the built-in dataset. If you supply your
-own `currencies` with other countries, `svgFlag` falls back to the emoji flag for
-those — regenerate with `npm run gen:flags` after extending the dataset if you are
-working from a clone.
+own `currencies` with other countries, those fall back to the emoji flag —
+regenerate with `npm run gen:flags` after extending the dataset if you are working
+from a clone.
+
+## Light & dark — `theme`
+
+The colour scheme comes from a prop, **never from the visitor's operating system**:
+
+```tsx
+<CurrencySelect />                  // light (default)
+<CurrencySelect theme="dark" />     // dark
+<CurrencySelect theme="system" />   // follow prefers-color-scheme
+```
+
+Wire it to whatever your app already uses:
+
+```tsx
+<CurrencySelect theme={appTheme === "dark" ? "dark" : "light"} />
+```
+
+Before 0.2.0 the component followed `prefers-color-scheme` on its own, so it could
+render dark inside a light app. It no longer does that unless you pass
+`theme="system"`.
+
+## Styles
+
+The stylesheet injects itself into `<head>` on first render — one `<style
+data-rcs-styles>` tag per document, no matter how many pickers you render. It is
+*prepended*, so any CSS your app ships overrides it at equal specificity without
+`!important`.
+
+Two ways to opt out:
+
+```tsx
+// per instance
+<CurrencySelect injectStyles={false} />
+```
+
+```tsx
+// then load the file yourself (e.g. under a strict style-src CSP)
+import "@mk01/react-currency-select/styles.css";
+```
 
 ## Troubleshooting
 
 **The control renders unstyled — huge flags, no dropdown box, text run together.**
-The stylesheet is not loaded. It is never auto-injected (that would break SSR), so
-import it once, anywhere in your app:
+On **0.2.0+** this should not happen: styles inject themselves. If it does, you either
+passed `injectStyles={false}`, or a strict `style-src` CSP is blocking the inline
+`<style>` — in that case import `@mk01/react-currency-select/styles.css` instead.
 
-```tsx
-import "@mk01/react-currency-select/styles.css";
-```
+On **0.1.0** this was a packaging bug: `sideEffects: ["*.css"]` does not match
+`dist/styles.css` under webpack's glob rules, so production builds tree-shook the
+stylesheet away. Fixed in 0.1.1; upgrade.
 
-Framework notes:
-
-- **Vite / Remix / Astro** — import it in the component or your entry file.
-- **Next.js App Router** — import it in `app/layout.tsx` (or any Server Component in
-  the tree).
-- **Next.js Pages Router** — CSS from `node_modules` may only be imported in
-  `pages/_app.tsx`.
-- **Anything else on webpack** — make sure you are on **0.1.1 or later**. `0.1.0`
-  declared `sideEffects: ["*.css"]`, which webpack does not match against
-  `dist/styles.css`, so production builds tree-shook the stylesheet away.
-
-If you would rather not ship the CSS at all, every class is documented under
-[Theming](#theming) — style `.rcs-*` yourself and skip the import.
+**The picker is dark while my app is light.** Before 0.2.0 the component followed
+`prefers-color-scheme`. Upgrade — `theme` now defaults to `"light"` and only follows
+the OS when you pass `theme="system"`.
 
 ## Props
 
@@ -149,6 +163,9 @@ If you would rather not ship the CSS at all, every class is documented under
 | `onChange` | `(currency: Currency) => void` | — | Fires with the **full** `Currency` object. |
 | `currencies` | `Currency[]` | built-in list | Override or subset the dataset. |
 | `placeholder` | `string` | `"Select currency"` | Shown when nothing is selected. |
+| `theme` | `"light" \| "dark" \| "system"` | `"light"` | Colour scheme. Only `"system"` consults the OS. |
+| `flag` | `"svg" \| "emoji"` | `"svg"` | Bundled SVG flags, or Unicode emoji glyphs. |
+| `injectStyles` | `boolean` | `true` | Auto-inject the stylesheet into `<head>`. |
 | `searchable` | `boolean` | `false` | Renders a filter input at the top of the popup. |
 | `searchPlaceholder` | `string` | `"Search currencies…"` | Placeholder for that input. |
 | `disabled` | `boolean` | `false` | Disables the trigger. |
@@ -156,7 +173,7 @@ If you would rather not ship the CSS at all, every class is documented under
 | `id` | `string` | auto | Id of the trigger; ARIA ids derive from it. |
 | `name` | `string` | — | Renders a hidden input so the value submits in plain forms. |
 | `aria-label` | `string` | `placeholder` | Accessible name for the control. |
-| `renderFlag` | `(country: string) => ReactNode` | emoji flag | Replace the emoji with your own node. |
+| `renderFlag` | `(country: string) => ReactNode` | — | Draw your own flag. Takes precedence over `flag`. |
 
 ```ts
 interface Currency {
@@ -261,17 +278,19 @@ maps.
 
 ## Size
 
-| File | Minified | Gzipped |
+| What | Minified | Gzipped |
 | --- | --- | --- |
-| `dist/index.js` (ESM) | 13.8 kB | 4.7 kB |
-| `dist/index.cjs` (CJS) | 14.7 kB | 5.0 kB |
-| `dist/styles.css` | 4.5 kB | 1.4 kB |
-| `dist/flags.js` (opt-in SVG flags) | 82.3 kB | 23.1 kB |
+| ESM, everything (component + 141 currencies + 141 SVG flags + CSS) | 103.6 kB | **29.2 kB** |
+| …of which the component, dataset and CSS alone | 18.3 kB | 6.2 kB |
+| …of which the SVG flag artwork | 85.3 kB | 23.0 kB |
 
-Roughly 10 kB of the core is the currency dataset itself. Pass a smaller `currencies`
-array if you only need a handful — the dataset is a plain export, so bundlers can
-drop it when you never import it. The SVG flags live in their own entry point and are
-never pulled in unless you import `@mk01/react-currency-select/flags`.
+The flags are the bulk of it, and since 0.2.0 they ship in the main entry so that
+`flag="svg"` works with no extra import. `flag="emoji"` does **not** shrink the
+bundle — the artwork is statically imported, so a bundler cannot drop it. That is a
+deliberate trade: a working default beats a smaller default.
+
+If 23 kB matters more to you than Windows support, pin `0.1.x`, or use `renderFlag`
+with your own `<img>` and the flags never load.
 
 ## Development
 

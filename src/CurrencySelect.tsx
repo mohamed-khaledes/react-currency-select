@@ -1,8 +1,17 @@
 import * as React from "react";
 import { currencies as builtInCurrencies } from "./currencies";
 import { toFlag } from "./flag";
+import { svgFlag } from "./flags";
+import { injectStyles } from "./injectStyles";
 import { useClickOutside } from "./useClickOutside";
 import type { Currency, CurrencySelectProps } from "./types";
+
+/** Styles must land before paint; on the server nothing runs at all. */
+const useStyleEffect =
+  typeof document === "undefined"
+    ? React.useEffect
+    : (React as { useInsertionEffect?: typeof React.useEffect }).useInsertionEffect ??
+      React.useLayoutEffect;
 
 /** React 18 `useId` when available, tiny counter fallback for React 17. */
 let counter = 0;
@@ -22,6 +31,9 @@ export function CurrencySelect({
   onChange,
   currencies = builtInCurrencies,
   placeholder = "Select currency",
+  theme = "light",
+  flag = "svg",
+  injectStyles: shouldInjectStyles = true,
   searchable = false,
   searchPlaceholder = "Search currencies…",
   disabled = false,
@@ -31,6 +43,10 @@ export function CurrencySelect({
   "aria-label": ariaLabel,
   renderFlag,
 }: CurrencySelectProps) {
+  useStyleEffect(() => {
+    if (shouldInjectStyles) injectStyles();
+  }, [shouldInjectStyles]);
+
   const autoId = useStableId();
   const baseId = id ?? `rcs-${autoId}`;
   const listId = `${baseId}-listbox`;
@@ -224,8 +240,10 @@ export function CurrencySelect({
     }
   };
 
-  const flagFor = (country: string) =>
-    renderFlag ? renderFlag(country) : toFlag(country);
+  const flagFor = (country: string) => {
+    if (renderFlag) return renderFlag(country);
+    return flag === "emoji" ? toFlag(country) : svgFlag(country);
+  };
 
   const activeDescendant = open && activeOption ? optionId(activeOption.code) : undefined;
 
@@ -234,6 +252,7 @@ export function CurrencySelect({
       ref={rootRef}
       className={className ? `rcs-root ${className}` : "rcs-root"}
       onKeyDown={onKeyDown}
+      data-theme={theme}
       data-open={open ? "true" : undefined}
       data-disabled={disabled ? "true" : undefined}
     >
