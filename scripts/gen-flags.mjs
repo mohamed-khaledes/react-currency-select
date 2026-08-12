@@ -22,6 +22,10 @@ const minify = (svg) =>
     .replace(/\s{2,}/g, " ")
     // Single-quoted attributes survive a double-quoted JS string unescaped.
     .replace(/="([^"]*)"/g, "='$1'")
+    // Intrinsic 3:2 size so a flag stays flag-sized even when the consumer has
+    // not loaded styles.css. Any CSS rule beats a presentation attribute, so
+    // `.rcs-flag-svg svg { width: 100% }` still wins when the stylesheet is there.
+    .replace(/^<svg /, "<svg width='24' height='16' ")
     .trim();
 
 const missing = [];

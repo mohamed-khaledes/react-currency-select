@@ -116,6 +116,30 @@ own `currencies` with other countries, `svgFlag` falls back to the emoji flag fo
 those — regenerate with `npm run gen:flags` after extending the dataset if you are
 working from a clone.
 
+## Troubleshooting
+
+**The control renders unstyled — huge flags, no dropdown box, text run together.**
+The stylesheet is not loaded. It is never auto-injected (that would break SSR), so
+import it once, anywhere in your app:
+
+```tsx
+import "@mk01/react-currency-select/styles.css";
+```
+
+Framework notes:
+
+- **Vite / Remix / Astro** — import it in the component or your entry file.
+- **Next.js App Router** — import it in `app/layout.tsx` (or any Server Component in
+  the tree).
+- **Next.js Pages Router** — CSS from `node_modules` may only be imported in
+  `pages/_app.tsx`.
+- **Anything else on webpack** — make sure you are on **0.1.1 or later**. `0.1.0`
+  declared `sideEffects: ["*.css"]`, which webpack does not match against
+  `dist/styles.css`, so production builds tree-shook the stylesheet away.
+
+If you would rather not ship the CSS at all, every class is documented under
+[Theming](#theming) — style `.rcs-*` yourself and skip the import.
+
 ## Props
 
 | Prop | Type | Default | Description |
