@@ -72,7 +72,7 @@
   line-height: 1;
 }
 
-/* SVG flags (react-currency-select/flags) — sized in em so they track the text
+/* SVG flags (@mk01/react-currency-select/flags) — sized in em so they track the text
    and land at the same optical weight as the emoji glyphs they replace. */
 .rcs-flag-svg {
   display: block;

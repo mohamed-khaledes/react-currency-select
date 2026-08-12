@@ -1,8 +1,13 @@
 import { useEffect, useState, type CSSProperties } from "react";
-import { CurrencySelect, toFlag, currencies, type Currency } from "react-currency-select";
-import { svgFlag } from "react-currency-select/flags";
+import {
+  CurrencySelect,
+  toFlag,
+  currencies,
+  type Currency,
+} from "@mk01/react-currency-select";
+import { svgFlag } from "@mk01/react-currency-select/flags";
 
-const INSTALL = "npm i react-currency-select";
+const INSTALL = "npm i @mk01/react-currency-select";
 const GZIP_SIZE = "4.7 kB";
 const MIN_SIZE = "13.8 kB";
 const FLAGS_GZIP = "23 kB";
@@ -49,7 +54,9 @@ export function App() {
   };
 
   const snippet = [
-    svg ? `import { svgFlag } from "react-currency-select/flags";\n` : null,
+    svg
+      ? `import { svgFlag } from "@mk01/react-currency-select/flags";\n`
+      : null,
     `<CurrencySelect`,
     `  defaultValue="${playgroundValue?.code ?? "USD"}"`,
     searchable ? `  searchable` : null,
@@ -68,12 +75,18 @@ export function App() {
           <span className="brand-mark" aria-hidden="true">
             💱
           </span>
-          <span className="brand-name">react-currency-select</span>
+          <span className="brand-name">@mk01/react-currency-select</span>
         </a>
         <nav className="nav-links">
-          <a href="#docs">Docs</a>
-          <a href="https://github.com/your-name/react-currency-select">GitHub</a>
-          <a href="https://www.npmjs.com/package/react-currency-select">npm</a>
+          <a href="https://github.com/mohamed-khaledes/react-currency-select">
+            Docs
+          </a>
+          <a href="https://github.com/mohamed-khaledes/react-currency-select">
+            GitHub
+          </a>
+          <a href="https://www.npmjs.com/package/@mk01/react-currency-select">
+            npm
+          </a>
           <button
             type="button"
             className="theme-toggle"
@@ -87,15 +100,18 @@ export function App() {
 
       <main id="top">
         <section className="hero">
-          <p className="eyebrow">Zero runtime dependencies · {GZIP_SIZE} gzipped</p>
+          <p className="eyebrow">
+            Zero runtime dependencies · {GZIP_SIZE} gzipped
+          </p>
           <h1>
             The currency picker that
             <br />
             <span className="grad">ships nothing extra.</span>
           </h1>
           <p className="sub">
-            Emoji flags by default, real SVG flags on every OS when you want them.
-            Full ARIA keyboard support. One small CSS file you theme with variables.
+            Emoji flags by default, real SVG flags on every OS when you want
+            them. Full ARIA keyboard support. One small CSS file you theme with
+            variables.
           </p>
 
           <button type="button" className="install" onClick={copyInstall}>
@@ -110,7 +126,7 @@ export function App() {
             <CurrencySelect
               id="hero-select"
               searchable
-              defaultValue="USD"
+              defaultValue="EGP"
               renderFlag={svg ? svgFlag : undefined}
               onChange={setPicked}
             />
@@ -150,23 +166,23 @@ export function App() {
             <article className="card">
               <h3>Zero dependencies</h3>
               <p>
-                <code>dependencies: {"{}"}</code>. React and React&nbsp;DOM are peers.
-                Nothing else lands in your lockfile.
+                <code>dependencies: {"{}"}</code>. React and React&nbsp;DOM are
+                peers. Nothing else lands in your lockfile.
               </p>
             </article>
             <article className="card">
               <h3>Flags on every OS</h3>
               <p>
                 Windows ships no emoji flags — so{" "}
-                <code>react-currency-select/flags</code> bundles real SVGs ({FLAGS_GZIP}{" "}
-                gzip, opt-in, offline).
+                <code>@mk01/react-currency-select/flags</code> bundles real SVGs
+                ({FLAGS_GZIP} gzip, opt-in, offline).
               </p>
             </article>
             <article className="card">
               <h3>Tiny bundle</h3>
               <p>
-                {MIN_SIZE} minified, <strong>{GZIP_SIZE} gzipped</strong> — dataset
-                included. Tree-shakeable ESM + CJS.
+                {MIN_SIZE} minified, <strong>{GZIP_SIZE} gzipped</strong> —
+                dataset included. Tree-shakeable ESM + CJS.
               </p>
             </article>
             <article className="card">
@@ -186,15 +202,15 @@ export function App() {
             <article className="card">
               <h3>TypeScript first</h3>
               <p>
-                Types ship in the package. <code>onChange</code> hands you the whole{" "}
-                <code>Currency</code> object.
+                Types ship in the package. <code>onChange</code> hands you the
+                whole <code>Currency</code> object.
               </p>
             </article>
             <article className="card">
               <h3>Searchable &amp; controllable</h3>
               <p>
-                Optional filter input, controlled or uncontrolled value, and a hidden
-                input for plain HTML forms.
+                Optional filter input, controlled or uncontrolled value, and a
+                hidden input for plain HTML forms.
               </p>
             </article>
           </div>
@@ -203,7 +219,9 @@ export function App() {
         <section className="playground" id="playground">
           <div className="section-head">
             <h2>Live playground</h2>
-            <p>Flip the props and watch the component — and the snippet — follow.</p>
+            <p>
+              Flip the props and watch the component — and the snippet — follow.
+            </p>
           </div>
 
           <div className="play-grid">
@@ -238,7 +256,9 @@ export function App() {
                 <input
                   type="checkbox"
                   checked={theme === "dark"}
-                  onChange={(e) => setTheme(e.target.checked ? "dark" : "light")}
+                  onChange={(e) =>
+                    setTheme(e.target.checked ? "dark" : "light")
+                  }
                 />
                 <span>dark theme</span>
               </label>
@@ -297,9 +317,9 @@ export function App() {
             </pre>
             <pre className="snippet">
               <code>{`import { useState } from "react";
-import { CurrencySelect, type Currency } from "react-currency-select";
-import { svgFlag } from "react-currency-select/flags"; // flags on every OS
-import "react-currency-select/styles.css";
+import { CurrencySelect, type Currency } from "@mk01/react-currency-select";
+import { svgFlag } from "@mk01/react-currency-select/flags"; // flags on every OS
+import "@mk01/react-currency-select/styles.css";
 
 export function Example() {
   const [selected, setSelected] = useState<Currency>();
@@ -322,12 +342,13 @@ export function Example() {
             </pre>
           </div>
           <p className="note">
-            <strong>Flags on Windows:</strong> Windows ships no emoji flag glyphs, so
-            the default emoji flags degrade to the two country letters there. Import the
-            bundled SVG set — <code>{`import { svgFlag } from "react-currency-select/flags"`}</code>{" "}
-            and pass <code>renderFlag={"{svgFlag}"}</code> — for identical flags on every
-            OS, offline, with no extra dependency. It is a separate entry point, so you
-            only pay the {FLAGS_GZIP} if you import it.
+            <strong>Flags on Windows:</strong> Windows ships no emoji flag
+            glyphs, so the default emoji flags degrade to the two country
+            letters there. Import the bundled SVG set —{" "}
+            <code>{`import { svgFlag } from "@mk01/react-currency-select/flags"`}</code>{" "}
+            and pass <code>renderFlag={"{svgFlag}"}</code> — for identical flags
+            on every OS, offline, with no extra dependency. It is a separate
+            entry point, so you only pay the {FLAGS_GZIP} if you import it.
           </p>
         </section>
       </main>
@@ -335,8 +356,12 @@ export function Example() {
       <footer className="footer">
         <span>MIT © {new Date().getFullYear()}</span>
         <span className="footer-links">
-          <a href="https://github.com/your-name/react-currency-select">GitHub</a>
-          <a href="https://www.npmjs.com/package/react-currency-select">npm</a>
+          <a href="https://github.com/mohamed-khaledes/react-currency-select">
+            GitHub
+          </a>
+          <a href="https://www.npmjs.com/package/@mk01/react-currency-select">
+            npm
+          </a>
         </span>
       </footer>
     </div>

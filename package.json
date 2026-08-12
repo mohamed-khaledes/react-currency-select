@@ -1,5 +1,5 @@
 {
-  "name": "react-currency-select",
+  "name": "@mk01/react-currency-select",
   "version": "0.1.0",
   "description": "Tiny, zero-dependency React currency selector with flags.",
   "type": "module",
@@ -59,9 +59,9 @@
     "iso4217"
   ],
   "license": "MIT",
-  "author": "",
+  "author": "Mohamed Khaled",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-name/react-currency-select"
+    "url": "git+https://github.com/mohamed-khaledes/react-currency-select.git"
   }
 }

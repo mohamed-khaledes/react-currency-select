@@ -18,8 +18,8 @@
     "noEmit": true,
     "types": ["node"],
     "paths": {
-      "react-currency-select": ["./src/index.ts"],
-      "react-currency-select/flags": ["./src/flags.ts"]
+      "@mk01/react-currency-select": ["./src/index.ts"],
+      "@mk01/react-currency-select/flags": ["./src/flags.ts"]
     }
   },
   "include": ["src", "demo", "scripts", "tsup.config.ts"]

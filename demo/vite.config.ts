@@ -11,9 +11,9 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      "react-currency-select/styles.css": resolve(here, "../src/styles.css"),
-      "react-currency-select/flags": resolve(here, "../src/flags.ts"),
-      "react-currency-select": resolve(here, "../src/index.ts"),
+      "@mk01/react-currency-select/styles.css": resolve(here, "../src/styles.css"),
+      "@mk01/react-currency-select/flags": resolve(here, "../src/flags.ts"),
+      "@mk01/react-currency-select": resolve(here, "../src/index.ts"),
     },
   },
   build: {

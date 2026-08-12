@@ -1,6 +1,6 @@
-# react-currency-select
+# @mk01/react-currency-select
 
-[![npm](https://img.shields.io/badge/npm-0.1.0-blue)](https://www.npmjs.com/package/react-currency-select)
+[![npm](https://img.shields.io/badge/npm-0.1.0-blue)](https://www.npmjs.com/package/@mk01/react-currency-select)
 [![bundle](https://img.shields.io/badge/gzip-4.7%20kB-brightgreen)](#size)
 [![deps](https://img.shields.io/badge/dependencies-0-brightgreen)](#zero-dependencies)
 [![license](https://img.shields.io/badge/license-MIT-black)](./LICENSE)
@@ -15,10 +15,12 @@ every OS — Windows included.
 🇯🇵  JPY  Japanese Yen  (¥)
 ```
 
+**[Live demo & playground →](https://mohamed-khaledes.github.io/react-currency-select/)**
+
 ## Install
 
 ```sh
-npm i react-currency-select
+npm i @mk01/react-currency-select
 ```
 
 React 17+ is a peer dependency. Nothing else is installed.
@@ -27,8 +29,8 @@ React 17+ is a peer dependency. Nothing else is installed.
 
 ```tsx
 import { useState } from "react";
-import { CurrencySelect, type Currency } from "react-currency-select";
-import "react-currency-select/styles.css";
+import { CurrencySelect, type Currency } from "@mk01/react-currency-select";
+import "@mk01/react-currency-select/styles.css";
 
 export function Example() {
   const [selected, setSelected] = useState<Currency>();
@@ -55,7 +57,7 @@ to its Unicode **Regional Indicator Symbol** — no images, no sprite sheet, no 
 library:
 
 ```ts
-import { toFlag } from "react-currency-select";
+import { toFlag } from "@mk01/react-currency-select";
 toFlag("US"); // "🇺🇸"
 ```
 
@@ -66,9 +68,9 @@ amount of CSS fixes that — the glyphs simply do not exist on the machine.
 So the package also ships real **SVG flags** behind a separate entry point:
 
 ```tsx
-import { CurrencySelect } from "react-currency-select";
-import { svgFlag } from "react-currency-select/flags";
-import "react-currency-select/styles.css";
+import { CurrencySelect } from "@mk01/react-currency-select";
+import { svgFlag } from "@mk01/react-currency-select/flags";
+import "@mk01/react-currency-select/styles.css";
 
 <CurrencySelect renderFlag={svgFlag} />;
 ```
@@ -81,13 +83,13 @@ Because it is a separate entry, you only pay for it when you import it:
 
 | Import | gzip |
 | --- | --- |
-| `react-currency-select` (emoji flags) | 4.7 kB |
-| `+ react-currency-select/flags` (SVG flags) | +23 kB |
+| `@mk01/react-currency-select` (emoji flags) | 4.7 kB |
+| `+ @mk01/react-currency-select/flags` (SVG flags) | +23 kB |
 
-`react-currency-select/flags` also exports:
+`@mk01/react-currency-select/flags` also exports:
 
 ```tsx
-import { FlagIcon, hasSvgFlag, FLAG_SVGS } from "react-currency-select/flags";
+import { FlagIcon, hasSvgFlag, FLAG_SVGS } from "@mk01/react-currency-select/flags";
 
 <FlagIcon country="JP" />;      // standalone flag element
 hasSvgFlag("JP");               // true — countries outside the set fall back to emoji
@@ -218,7 +220,7 @@ Class hooks: `.rcs-root`, `.rcs-trigger`, `.rcs-value`, `.rcs-placeholder`,
 ## Custom dataset
 
 ```tsx
-import { CurrencySelect, currencies } from "react-currency-select";
+import { CurrencySelect, currencies } from "@mk01/react-currency-select";
 
 const majors = currencies.filter((c) =>
   ["USD", "EUR", "GBP", "JPY", "CHF"].includes(c.code),
@@ -245,7 +247,7 @@ maps.
 Roughly 10 kB of the core is the currency dataset itself. Pass a smaller `currencies`
 array if you only need a handful — the dataset is a plain export, so bundlers can
 drop it when you never import it. The SVG flags live in their own entry point and are
-never pulled in unless you import `react-currency-select/flags`.
+never pulled in unless you import `@mk01/react-currency-select/flags`.
 
 ## Development
 
@@ -255,7 +257,14 @@ npm run dev:demo    # landing page + live playground (Vite, lib aliased to src)
 npm run build       # dist/ via tsup + copied stylesheet
 npm run typecheck
 npm run gen:flags   # re-vendor src/flags.data.ts from country-flag-icons
+npm run build:demo  # static landing page -> demo/dist-demo
 ```
+
+The landing page deploys to GitHub Pages on every push to `main` via
+[.github/workflows/deploy-demo.yml](.github/workflows/deploy-demo.yml). Set
+**Settings → Pages → Source** to **GitHub Actions** once, and the workflow handles the
+rest. The demo builds with `base: "./"`, so it works at a project subpath without
+extra configuration.
 
 `src/flags.data.ts` is generated and committed, so building the package never needs
 the flag source at all.

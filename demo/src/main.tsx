@@ -1,6 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import "react-currency-select/styles.css";
+import "@mk01/react-currency-select/styles.css";
 import "./landing.css";
 import { App } from "./App";
 
