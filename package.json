@@ -1,0 +1,67 @@
+{
+  "name": "react-currency-select",
+  "version": "0.1.0",
+  "description": "Tiny, zero-dependency React currency selector with flags.",
+  "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./flags": {
+      "types": "./dist/flags.d.ts",
+      "import": "./dist/flags.js",
+      "require": "./dist/flags.cjs"
+    },
+    "./styles.css": "./dist/styles.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup && node scripts/copy-css.mjs",
+    "gen:flags": "node scripts/gen-flags.mjs",
+    "typecheck": "tsc --noEmit",
+    "dev:demo": "vite --config demo/vite.config.ts",
+    "build:demo": "vite build --config demo/vite.config.ts",
+    "preview:demo": "vite preview --config demo/vite.config.ts",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "react": ">=17",
+    "react-dom": ">=17"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@vitejs/plugin-react": "^4",
+    "country-flag-icons": "^1.6.20",
+    "react": "^18",
+    "react-dom": "^18",
+    "tsup": "^8",
+    "typescript": "^5",
+    "vite": "^5"
+  },
+  "keywords": [
+    "react",
+    "currency",
+    "select",
+    "dropdown",
+    "flags",
+    "iso4217"
+  ],
+  "license": "MIT",
+  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-name/react-currency-select"
+  }
+}

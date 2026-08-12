@@ -1,0 +1,8 @@
+node_modules/
+dist/
+dist-demo/
+demo/dist-demo/
+*.tgz
+.DS_Store
+*.log
+.vite/

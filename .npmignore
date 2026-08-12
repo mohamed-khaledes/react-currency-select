@@ -1,0 +1,8 @@
+src/
+demo/
+scripts/
+node_modules/
+tsup.config.ts
+tsconfig.json
+*.tgz
+*.log
