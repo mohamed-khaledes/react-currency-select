@@ -100,6 +100,56 @@ own `currencies` with other countries, those fall back to the emoji flag —
 regenerate with `npm run gen:flags` after extending the dataset if you are working
 from a clone.
 
+## Country → currency
+
+You often know the visitor's **country** and want their **currency**. Pass it:
+
+```tsx
+<CurrencySelect country="DE" />   // selects EUR
+<CurrencySelect country="EC" />   // selects USD — Ecuador uses the dollar
+```
+
+234 countries are mapped, so this works for the ~90 countries that share a currency
+with someone else, not just the 141 the dataset names directly.
+
+**Precedence:** `value` > `defaultValue` (initial render only) > `country`.
+
+`country` is live: change it and the selection follows, which makes this work
+naturally next to a country field in a form.
+
+```tsx
+<CountryPicker value={country} onChange={setCountry} />
+<CurrencySelect country={country} onChange={setCurrency} />
+```
+
+The user is never locked out — they can pick any currency, and their choice stands
+until `country` changes to something new. Prop-driven changes **do not fire
+`onChange`**, exactly like `value` and `defaultValue`. If you need the currency for a
+country without rendering anything:
+
+```tsx
+import { currencyForCountry, currencyCodeForCountry } from "@mk01/react-currency-select";
+
+currencyForCountry("DE");      // { code: "EUR", name: "Euro", symbol: "€", country: "EU" }
+currencyCodeForCountry("DE");  // "EUR"
+currencyCodeForCountry("ZZ");  // undefined
+```
+
+### Searching by country
+
+With `searchable`, a two-letter query is also read as a country code, so people can
+find a currency by the place they associate it with:
+
+| Type | Finds | Why |
+| --- | --- | --- |
+| `DE` | EUR | Germany uses the euro |
+| `EC` | USD | Ecuador uses the US dollar |
+| `JP` | JPY | its own country |
+| `yen` | JPY | name search, unchanged |
+| `EG` | EGP | code and country agree |
+
+Longer queries keep matching code, name and the currency's own country as before.
+
 ## Light & dark — `theme`
 
 The colour scheme comes from a prop, **never from the visitor's operating system**:
@@ -160,6 +210,7 @@ the OS when you pass `theme="system"`.
 | --- | --- | --- | --- |
 | `value` | `string` | — | Controlled currency code, e.g. `"USD"`. |
 | `defaultValue` | `string` | — | Uncontrolled initial code. Ignored when `value` is set. |
+| `country` | `string` | — | ISO 3166-1 alpha-2 code — selects the currency used there. See [Country → currency](#country--currency). |
 | `onChange` | `(currency: Currency) => void` | — | Fires with the **full** `Currency` object. |
 | `currencies` | `Currency[]` | built-in list | Override or subset the dataset. |
 | `placeholder` | `string` | `"Select currency"` | Shown when nothing is selected. |
@@ -299,7 +350,8 @@ npm install
 npm run dev:demo    # landing page + live playground (Vite, lib aliased to src)
 npm run build       # dist/ via tsup + copied stylesheet
 npm run typecheck
-npm run gen:flags   # re-vendor src/flags.data.ts from country-flag-icons
+npm run gen:flags      # re-vendor src/flags.data.ts from country-flag-icons
+npm run gen:countries  # re-vendor src/countries.data.ts from country-to-currency
 npm run build:demo  # static landing page -> demo/dist-demo
 ```
 

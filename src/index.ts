@@ -5,5 +5,10 @@ export { toFlag } from "./flag";
 // main entry — no subpath import needed. `./flags` still works for anyone who
 // only wants the artwork.
 export { svgFlag, FlagIcon, hasSvgFlag, FLAG_SVGS } from "./flags";
+export {
+  currencyForCountry,
+  currencyCodeForCountry,
+  COUNTRY_CURRENCY,
+} from "./country";
 export { injectStyles } from "./injectStyles";
 export type { Currency, CurrencySelectProps } from "./types";

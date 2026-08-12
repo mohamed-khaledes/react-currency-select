@@ -2,6 +2,7 @@ import * as React from "react";
 import { currencies as builtInCurrencies } from "./currencies";
 import { toFlag } from "./flag";
 import { svgFlag } from "./flags";
+import { currencyCodeForCountry, COUNTRY_CURRENCY } from "./country";
 import { injectStyles } from "./injectStyles";
 import { useClickOutside } from "./useClickOutside";
 import type { Currency, CurrencySelectProps } from "./types";
@@ -28,6 +29,7 @@ const TYPEAHEAD_RESET_MS = 600;
 export function CurrencySelect({
   value,
   defaultValue,
+  country,
   onChange,
   currencies = builtInCurrencies,
   placeholder = "Select currency",
@@ -57,8 +59,22 @@ export function CurrencySelect({
   const listRef = React.useRef<HTMLUListElement>(null);
   const searchRef = React.useRef<HTMLInputElement>(null);
 
+  const codeFromCountry = country ? currencyCodeForCountry(country) : undefined;
+
   const isControlled = value !== undefined;
-  const [innerCode, setInnerCode] = React.useState<string | undefined>(defaultValue);
+  const [innerCode, setInnerCode] = React.useState<string | undefined>(
+    defaultValue ?? codeFromCountry,
+  );
+
+  // Follow `country` when it changes, without locking the user out of their own
+  // choice in between. (React's "adjusting state when a prop changes" pattern —
+  // cheaper and flicker-free compared with doing this in an effect.)
+  const lastCountry = React.useRef(country);
+  if (country !== lastCountry.current) {
+    lastCountry.current = country;
+    if (codeFromCountry && codeFromCountry !== innerCode) setInnerCode(codeFromCountry);
+  }
+
   const currentCode = isControlled ? value : innerCode;
   const selected = React.useMemo(
     () => currencies.find((c) => c.code === currentCode),
@@ -72,8 +88,11 @@ export function CurrencySelect({
   const filtered = React.useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!searchable || !q) return currencies;
+    // A two-letter query is also read as a country: "DE" finds EUR, "EC" USD.
+    const viaCountry = q.length === 2 ? COUNTRY_CURRENCY[q.toUpperCase()] : undefined;
     return currencies.filter(
       (c) =>
+        c.code === viaCountry ||
         c.code.toLowerCase().includes(q) ||
         c.name.toLowerCase().includes(q) ||
         c.country.toLowerCase().includes(q),

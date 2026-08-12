@@ -11,6 +11,16 @@ const INSTALL = "npm i @mk01/react-currency-select";
 const GZIP_SIZE = "29 kB";
 const EMOJI_GZIP = "6.2 kB";
 
+const COUNTRIES = [
+  { code: "", label: "— none —" },
+  { code: "DE", label: "Germany (DE) → EUR" },
+  { code: "EC", label: "Ecuador (EC) → USD" },
+  { code: "JP", label: "Japan (JP) → JPY" },
+  { code: "EG", label: "Egypt (EG) → EGP" },
+  { code: "PS", label: "Palestine (PS) → ILS" },
+  { code: "BR", label: "Brazil (BR) → BRL" },
+];
+
 const ACCENTS = [
   { name: "Indigo", value: "#4f46e5" },
   { name: "Emerald", value: "#10b981" },
@@ -30,6 +40,7 @@ export function App() {
   const [searchable, setSearchable] = useState(true);
   const [disabled, setDisabled] = useState(false);
   const [svg, setSvg] = useState(true);
+  const [country, setCountry] = useState("");
   const [accent, setAccent] = useState(ACCENTS[0]!.value);
   const [playgroundValue, setPlaygroundValue] = useState<Currency>();
 
@@ -54,7 +65,9 @@ export function App() {
 
   const snippet = [
     `<CurrencySelect`,
-    `  defaultValue="${playgroundValue?.code ?? "USD"}"`,
+    country
+      ? `  country="${country}"`
+      : `  defaultValue="${playgroundValue?.code ?? "USD"}"`,
     searchable ? `  searchable` : null,
     disabled ? `  disabled` : null,
     svg ? null : `  flag="emoji"`,
@@ -98,8 +111,8 @@ export function App() {
       <main id="top">
         <section className="hero">
           <p className="eyebrow">
-            Zero runtime dependencies · flags &amp; styles included · {GZIP_SIZE}{" "}
-            gzipped
+            Zero runtime dependencies · flags &amp; styles included ·{" "}
+            {GZIP_SIZE} gzipped
           </p>
           <h1>
             The currency picker that
@@ -125,6 +138,7 @@ export function App() {
               id="hero-select"
               searchable
               defaultValue="EGP"
+              country="EG"
               flag={svg ? "svg" : "emoji"}
               theme={theme}
               onChange={setPicked}
@@ -205,6 +219,13 @@ export function App() {
               </p>
             </article>
             <article className="card">
+              <h3>Knows its countries</h3>
+              <p>
+                <code>country="DE"</code> selects EUR, and searching{" "}
+                <code>DE</code> finds it too — 234 countries mapped.
+              </p>
+            </article>
+            <article className="card">
               <h3>Searchable &amp; controllable</h3>
               <p>
                 Optional filter input, controlled or uncontrolled value, and a
@@ -262,6 +283,26 @@ export function App() {
               </label>
 
               <div className="accents">
+                <span className="accents-label">country</span>
+                <select
+                  className="country-select"
+                  value={country}
+                  onChange={(e) => setCountry(e.target.value)}
+                  aria-label="Visitor country"
+                >
+                  {COUNTRIES.map((c) => (
+                    <option key={c.code} value={c.code}>
+                      {c.label}
+                    </option>
+                  ))}
+                </select>
+                <p className="accents-hint">
+                  Drives <code>country</code> — the picker follows, and the user
+                  can still choose anything.
+                </p>
+              </div>
+
+              <div className="accents">
                 <span className="accents-label">accent</span>
                 <div className="swatches">
                   {ACCENTS.map((a) => (
@@ -286,7 +327,7 @@ export function App() {
               <CurrencySelect
                 searchable={searchable}
                 disabled={disabled}
-                defaultValue="EUR"
+                country={country || undefined}
                 name="currency"
                 flag={svg ? "svg" : "emoji"}
                 theme={theme}

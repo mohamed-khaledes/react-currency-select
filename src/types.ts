@@ -16,6 +16,18 @@ export interface CurrencySelectProps {
   value?: string;
   /** Uncontrolled initial code. Ignored if `value` is set. */
   defaultValue?: string;
+
+  /**
+   * ISO 3166-1 alpha-2 country code, e.g. `"DE"` — selects the currency used
+   * there (EUR). Handy when you know the visitor's country but not their
+   * currency.
+   *
+   * Precedence: `value` > `defaultValue` (initial render only) > `country`.
+   * Changing `country` afterwards moves the selection, but the user can still
+   * pick anything and their choice stands until `country` changes again.
+   * Prop-driven changes do not fire `onChange`, exactly like `value`.
+   */
+  country?: string;
   /** Fires with the FULL Currency object (not just the code). */
   onChange?: (currency: Currency) => void;
 
