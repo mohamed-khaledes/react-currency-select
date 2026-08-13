@@ -137,7 +137,7 @@ export function App() {
             <CurrencySelect
               id="hero-select"
               searchable
-              defaultValue="EGP"
+              searchPlaceholder="Search by code, name or country…"
               country="EG"
               flag={svg ? "svg" : "emoji"}
               theme={theme}
@@ -167,9 +167,10 @@ export function App() {
           </div>
 
           <p className="fineprint">
-            {currencies.length} currencies built in ·{" "}
+            {currencies.length} currencies · 234 countries mapped — try searching{" "}
+            <code>DE</code> or <code>EC</code> ·{" "}
             {svg
-              ? "SVG flags — identical on Windows, macOS, Linux, Android"
+              ? "SVG flags, identical on Windows, macOS, Linux, Android"
               : "Unicode emoji flags — Windows shows letters instead"}
           </p>
         </section>
@@ -207,8 +208,8 @@ export function App() {
             <article className="card">
               <h3>Themeable</h3>
               <p>
-                Every color, radius and shadow is a CSS variable on{" "}
-                <code>.rcs-root</code>. Dark mode built in.
+                <code>theme="dark"</code> — never the visitor's OS unless you ask
+                for <code>"system"</code>. Every colour is a CSS variable.
               </p>
             </article>
             <article className="card">
@@ -349,7 +350,7 @@ export function App() {
         <section className="usage" id="docs">
           <div className="section-head">
             <h2>Usage</h2>
-            <p>Install, import the stylesheet once, render.</p>
+            <p>Install and render. There is no step three.</p>
           </div>
           <div className="usage-grid">
             <pre className="snippet">
@@ -364,6 +365,7 @@ export function Example() {
   const [selected, setSelected] = useState<Currency>();
   return (
     <>
+      {/* country="DE" would preselect EUR instead */}
       <CurrencySelect defaultValue="USD" searchable onChange={setSelected} />
       {selected && (
         <p>

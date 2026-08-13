@@ -1,15 +1,18 @@
 # @mk01/react-currency-select
 
-[![npm](https://img.shields.io/badge/npm-0.1.0-blue)](https://www.npmjs.com/package/@mk01/react-currency-select)
-[![bundle](https://img.shields.io/badge/gzip-4.7%20kB-brightgreen)](#size)
+[![npm](https://img.shields.io/badge/npm-0.3.0-blue)](https://www.npmjs.com/package/@mk01/react-currency-select)
+[![bundle](https://img.shields.io/badge/gzip-30%20kB-brightgreen)](#size)
 [![deps](https://img.shields.io/badge/dependencies-0-brightgreen)](#zero-dependencies)
 [![license](https://img.shields.io/badge/license-MIT-black)](./LICENSE)
 
-**A tiny, zero-runtime-dependency React currency selector with flags.** Every option
-shows the country flag, the ISO 4217 code and the currency name; the closed control
-shows flag + code + name + symbol. 141 world currencies built in, with emoji flags by
-default and [bundled SVG flags](#flags-on-every-os-including-windows) that render on
-every OS — Windows included.
+**A zero-runtime-dependency React currency selector with flags.** Every option shows
+the country flag, the ISO 4217 code and the currency name; the closed control shows
+flag + code + name + symbol.
+
+141 world currencies and [real SVG flags](#flags--flag) are built in and used by
+default, so it renders identically on every OS — Windows included. The stylesheet
+injects itself, and [234 countries](#country--currency) are mapped to their currency,
+so `country="DE"` selects EUR and searching `DE` finds it.
 
 ```
 🇯🇵  JPY  Japanese Yen  (¥)
@@ -134,6 +137,11 @@ currencyForCountry("DE");      // { code: "EUR", name: "Euro", symbol: "€", co
 currencyCodeForCountry("DE");  // "EUR"
 currencyCodeForCountry("ZZ");  // undefined
 ```
+
+The raw map is exported too, as `COUNTRY_CURRENCY` — `{ DE: "EUR", EC: "USD", … }`.
+Countries whose currency is not in the dataset (Aruba, the Cayman Islands, the Solomon
+Islands and 13 others) are left out, so a lookup either returns a currency the
+component can render or nothing at all.
 
 ### Searching by country
 
@@ -261,6 +269,9 @@ Implements the WAI-ARIA combobox/listbox pattern.
 | `Tab` | Close and move on |
 | letters (when not `searchable`) | Type-ahead — jumps to the next option whose code or name starts with the buffer; the buffer clears after 600 ms, and repeating one letter cycles through its matches |
 
+With `searchable`, the filter matches the currency **code**, **name**, its own country,
+and — for two-letter queries — [any country that uses it](#searching-by-country).
+
 The trigger exposes `aria-haspopup="listbox"`, `aria-expanded` and `aria-controls`;
 the popup is a `role="listbox"` of `role="option"` items with `aria-selected`, and the
 focused element carries `aria-activedescendant` pointing at the active option. Clicking
@@ -292,22 +303,20 @@ Everything is a CSS variable on `.rcs-root`, so you can restyle with zero JS:
 }
 ```
 
-Dark mode follows `prefers-color-scheme` automatically, and you can force it per
-instance:
+Light and dark come from the [`theme` prop](#light--dark--theme), which sets
+`data-theme` on `.rcs-root`. To restyle a theme, target that attribute:
 
-```tsx
-<div data-theme="dark">
-  <CurrencySelect />
-</div>
+```css
+.rcs-root[data-theme="dark"] {
+  --rcs-bg: #0b0b0f;
+  --rcs-border: #1e1e26;
+}
 ```
-
-…or override the variables under your own `[data-theme="dark"]` selector — the
-component reads whatever `.rcs-root` inherits.
 
 Class hooks: `.rcs-root`, `.rcs-trigger`, `.rcs-value`, `.rcs-placeholder`,
 `.rcs-caret`, `.rcs-popup`, `.rcs-search`, `.rcs-list`, `.rcs-option`,
-`.rcs-option--active`, `.rcs-empty`, `.rcs-flag`, `.rcs-code`, `.rcs-name`,
-`.rcs-symbol`.
+`.rcs-option--active`, `.rcs-empty`, `.rcs-flag`, `.rcs-flag-svg`, `.rcs-code`,
+`.rcs-name`, `.rcs-symbol`.
 
 ## Custom dataset
 
@@ -324,16 +333,22 @@ const majors = currencies.filter((c) =>
 ## Zero dependencies
 
 `dependencies` is empty. React and React DOM are peers, everything else is a build
-tool. The package ships ESM + CJS + `.d.ts`, minified, tree-shakeable, with source
-maps.
+tool. The package ships ESM + CJS + `.d.ts`, minified, with source maps.
+
+The flag artwork and the country map come from `country-flag-icons` and
+`country-to-currency`, but both are **devDependencies**: they are vendored into
+generated source files at build time, so nothing extra lands in your lockfile and
+nothing is fetched at runtime.
 
 ## Size
 
 | What | Minified | Gzipped |
 | --- | --- | --- |
-| ESM, everything (component + 141 currencies + 141 SVG flags + CSS) | 103.6 kB | **29.2 kB** |
-| …of which the component, dataset and CSS alone | 18.3 kB | 6.2 kB |
+| ESM, everything (component + 141 currencies + 141 SVG flags + 234 countries + CSS) | 106.0 kB | **30.2 kB** |
+| …of which the component, datasets and CSS alone | 20.7 kB | 7.3 kB |
 | …of which the SVG flag artwork | 85.3 kB | 23.0 kB |
+
+Brotli, which most CDNs serve, brings the total to **25.9 kB**.
 
 The flags are the bulk of it, and since 0.2.0 they ship in the main entry so that
 `flag="svg"` works with no extra import. `flag="emoji"` does **not** shrink the
@@ -347,12 +362,14 @@ with your own `<img>` and the flags never load.
 
 ```sh
 npm install
-npm run dev:demo    # landing page + live playground (Vite, lib aliased to src)
-npm run build       # dist/ via tsup + copied stylesheet
+npm run dev:demo       # landing page + live playground (Vite, lib aliased to src)
+npm run build          # gen:css + tsup + copied stylesheet -> dist/
 npm run typecheck
-npm run gen:flags      # re-vendor src/flags.data.ts from country-flag-icons
+npm run build:demo     # static landing page -> demo/dist-demo
+
+npm run gen:flags      # re-vendor src/flags.data.ts     from country-flag-icons
 npm run gen:countries  # re-vendor src/countries.data.ts from country-to-currency
-npm run build:demo  # static landing page -> demo/dist-demo
+npm run gen:css        # re-vendor src/styles.gen.ts     from src/styles.css
 ```
 
 The landing page deploys to GitHub Pages on every push to `main` via
@@ -361,14 +378,19 @@ The landing page deploys to GitHub Pages on every push to `main` via
 rest. The demo builds with `base: "./"`, so it works at a project subpath without
 extra configuration.
 
-`src/flags.data.ts` is generated and committed, so building the package never needs
-the flag source at all.
+`flags.data.ts`, `countries.data.ts` and `styles.gen.ts` are generated **and
+committed**, so a clone typechecks and builds without regenerating anything. Re-run
+`gen:flags` and `gen:countries` after changing the currency dataset; `gen:css` runs
+as part of `build`, so editing `styles.css` is enough.
 
 ## License
 
 MIT.
 
-Bundled flag artwork is vendored from
-[country-flag-icons](https://github.com/catamphetamine/country-flag-icons) (MIT); the
-flag designs themselves are in the public domain. `country-flag-icons` is a
-build-time devDependency and is never installed by consumers.
+Vendored data, both build-time devDependencies that consumers never install:
+
+- Flag artwork from
+  [country-flag-icons](https://github.com/catamphetamine/country-flag-icons) (MIT) —
+  the flag designs themselves are in the public domain.
+- Country → currency map from
+  [country-to-currency](https://github.com/dilame/country-to-currency) (MIT).
